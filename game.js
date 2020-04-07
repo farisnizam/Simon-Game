@@ -13,7 +13,7 @@ $(document).keydown(function () {
         nextSequence();
         started = true;
     }
-});
+})
 
 // add event listener to button
 $('.btn').click(function () {
