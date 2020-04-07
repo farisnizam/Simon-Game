@@ -8,6 +8,7 @@ var level = 0;
 
 // detect keyboard press
 $(document).keypress(function () {
+    console.log('run');
     if (!started) {
         nextSequence();
         started = true;
