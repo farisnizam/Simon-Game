@@ -7,7 +7,7 @@ var started = false;
 var level = 0;
 
 // detect keyboard press
-$(document).keypress(function () {
+$(document).keydown(function () {
     console.log('run');
     if (!started) {
         nextSequence();
