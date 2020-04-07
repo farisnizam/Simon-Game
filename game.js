@@ -1,43 +1,109 @@
-
 var buttonColours = ["red", "blue", "green", "yellow"];
 
 var gamePattern = [];
 var userClickedPattern = [];
 
-$(".btn").click(function() {
+var started = false;
+var level = 0;
 
-  var userChosenColour = $(this).attr("id");
-  userClickedPattern.push(userChosenColour);
-
-  playSound(userChosenColour);
-
-  animatePress(userChosenColour);
+// detect keyboard press
+$(document).keydown(function () {
+    if (!started) {
+        nextSequence();
+        started = true;
+    }
 });
 
+// add event listener to button
+$('.btn').click(function () {
+
+    var userChosenColor = $(this).attr("id");
+    userClickedPattern.push(userChosenColor);
+
+    playSound(userChosenColor);
+    animatePress(userChosenColor);
+
+    checkAnswer(userClickedPattern.length - 1);
+    
+});
+
+function checkAnswer(currentLevel) {
+
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+        console.log('success');
+
+        if (userClickedPattern.length === gamePattern.length) {
+
+            setTimeout(function () {
+                nextSequence();
+            }, 1000);
+
+        }
+
+    } else {
+
+        playSound('wrong');
+
+        // add game over effect
+        $('body').addClass("game-over");
+        setTimeout(function () {
+            $('body').removeClass("game-over");
+        }, 200);
+
+        // change title
+        $("#level-title").text("Game Over, Press Any Key to Restart");
+
+        startOver();
+    }
+
+}
+
+// push random button to gamePattern
 function nextSequence() {
 
-  var randomNumber = Math.floor(Math.random() * 4);
-  var randomChosenColour = buttonColours[randomNumber];
-  gamePattern.push(randomChosenColour);
+    userClickedPattern = [];
 
-  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+    // increace level
+    level++;
+    $("#level-title").text("Level " + level);
 
-  playSound(randomChosenColour);
+    // pick random color and push to gamePattern
+    var randomNumber = Math.floor(Math.random() * 4);
+    var randomChosenColour = buttonColours[randomNumber];
+    gamePattern.push(randomChosenColour);
+
+    // flash animation
+    $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+
+    // play different audio based on color
+    playSound(randomChosenColour);
+
 }
+
+
 
 function playSound(name) {
-  var audio = new Audio("sounds/" + name + ".mp3");
-  audio.play();
+
+    var audio = new Audio('sounds/' + name + '.mp3');
+    audio.play();
+
 }
 
-//1. Create a new function called animatePress(), it should take a single input parameter called currentColour.
-function animatePress(currentColor) {
+// add press animation
+function animatePress(currentColour) {
 
-  //2. Use jQuery to add this pressed class to the button that gets clicked inside animatePress().
-  $("#" + currentColor).addClass("pressed");
+    $('#' + currentColour).addClass("pressed");
+    setTimeout(function () {
+        $('#' + currentColour).removeClass("pressed");
+    }, 100);
 
-  //3. use Google/Stackoverflow to figure out how you can use Javascript to remove the pressed class after a 100 milliseconds.
-  setTimeout(function () {
-    $("#" + currentColor).removeClass("pressed");
-  }, 100);
+}
+
+function startOver() {
+
+    // reset all variable
+    started = false;
+    level = 0;
+    gamePattern = [];
+
 }
